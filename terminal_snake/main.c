@@ -19,5 +19,5 @@ uint8_t main(void)
 
 void main_initGame(void)
 {
-    printf("%d", display_init());
+    printf("%d\n\n", display_init());
 }

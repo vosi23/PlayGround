@@ -14,7 +14,7 @@ bool display_init(void)
     i = j = 0u;
 
     FILE *fTemplate;
-    fTemplate = fopen("menu_template", "r");
+    fTemplate = fopen("templates/menu_template", "r");
 
     if(fTemplate == NULL)
         goto EXIT;
