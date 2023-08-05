@@ -11,7 +11,10 @@ create_output_folders:
 
 all: display main
 	gcc $(MAIN_PATH)/main.o $(DISPLAY_PATH)/display.o -o $(OUTPUT_PATH)/start_game
+
 	chmod +x $(OUTPUT_PATH)/start_game
+#	Create symlink for the runnable
+#	TODO: find a way to avoid error if the symlink exists already
 	ln -s $(OUTPUT_PATH)/start_game start_game
 
 display: create_output_folders display/display.c
