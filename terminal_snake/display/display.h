@@ -4,7 +4,6 @@
 #define DISPLAY_H
 
 #include <stdbool.h>
-#include <stdint.h>
 
 bool display_init(void);
 

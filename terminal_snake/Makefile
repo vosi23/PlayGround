@@ -3,6 +3,8 @@ OUTPUT_PATH = output
 MAIN_PATH = $(OUTPUT_PATH)/main
 DISPLAY_PATH = $(OUTPUT_PATH)/display
 
+#TODO: Create flag for Windows/Linux
+
 .PHONY = create_output_folders
 create_output_folders:
 	@mkdir -p $(OUTPUT_PATH)
@@ -14,8 +16,7 @@ all: display main
 
 	chmod +x $(OUTPUT_PATH)/start_game
 #	Create symlink for the runnable
-#	TODO: find a way to avoid error if the symlink exists already
-	ln -s $(OUTPUT_PATH)/start_game start_game
+	ln -f -s $(OUTPUT_PATH)/start_game start_game
 
 display: create_output_folders display/display.c
 	gcc -c display/display.c -o $(DISPLAY_PATH)/display.o
@@ -29,5 +30,5 @@ main: create_output_folders main.c
 clean_all:
 #	Clean all output directory
 # 	-f flag is used to avoid exiting with error if the folder doesn't exist 
-	rm -r -f output
+	rm -r -f $(OUTPUT_PATH)
 	rm -f start_game

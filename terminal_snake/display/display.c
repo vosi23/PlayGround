@@ -1,5 +1,13 @@
 #include <stdio.h>
+#include <stdint.h>
 #include "display.h"
+
+
+#define DISPLAY_MENU_TEMPLATE_NO_ROWS           15u
+#define DISPLAY_MENU_TEMPLATE_NO_COLUMNS        45u
+
+
+char template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLATE_NO_COLUMNS];
 
 void display_menu(void)
 {
@@ -8,10 +16,8 @@ void display_menu(void)
 
 bool display_init(void)
 {
-    /* TODO: CREATE DEFINES EITHER USE MALLOC */
-    char template[15][45];
-    uint8_t i, j;
-    i = j = 0u;
+    uint8_t noRows = 0u;
+    uint8_t noColumns = 0u;
 
     FILE *fTemplate;
     fTemplate = fopen("templates/menu_template", "r");
@@ -19,21 +25,22 @@ bool display_init(void)
     if(fTemplate == NULL)
         goto EXIT;
     
-    while( (template[i][j] = fgetc(fTemplate)) != EOF )
+    while( (template[noRows][noColumns] = fgetc(fTemplate)) != EOF )
     {
-        printf("%c", template[i][j]);
+        printf("%c", template[noRows][noColumns]);
     
-        if(template[i][j] == '\n')
+        if(template[noRows][noColumns] == '\n')
         {
-            i++;
-            j=0;
+            noRows++;
+            noColumns=0u;
         }
         else
-            j++;  
+            noColumns++;  
     }
     
     fclose(fTemplate);
     printf("\n\n");
+
     return true;
 
 EXIT:

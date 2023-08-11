@@ -6,18 +6,24 @@
 #include "stdio.h"
 /* TODO: REMOVE IT */
 
-/* TODO: Create makefile build env */
-
-void main_initGame(void);
+bool main_initGame(void);
 
 uint8_t main(void)
 {
-    main_initGame();
+    bool init_status = false;
+
+    init_status = main_initGame();
 
     return 0u;
 }
 
-void main_initGame(void)
+/* TODO: GDB!!!!!!! */
+
+bool main_initGame(void)
 {
-    printf("%d\n\n", display_init());
+    bool result = true;
+
+    result &= display_init();
+
+    return result;
 }
