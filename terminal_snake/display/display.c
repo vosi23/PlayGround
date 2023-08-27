@@ -15,7 +15,7 @@
 /*--------------------------------------------------------------------------*/
 /*--- local macros and defines                                           ---*/
 /*--------------------------------------------------------------------------*/
-#define DISPLAY_MENU_TEMPLATE_NO_ROWS           15u
+#define DISPLAY_MENU_TEMPLATE_NO_ROWS           16u
 #define DISPLAY_MENU_TEMPLATE_NO_COLUMNS        45u
 
 /*--------------------------------------------------------------------------*/
@@ -30,6 +30,7 @@ static void display_menu(void);
 /*--------------------------------------------------------------------------*/
 /*--- local static variables                                             ---*/
 /*--------------------------------------------------------------------------*/
+static char template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLATE_NO_COLUMNS];
 
 /*--------------------------------------------------------------------------*/
 /*--- global variables                                                   ---*/
@@ -50,7 +51,9 @@ static void display_menu(void);
  ****************************************************************************/
 static void display_menu(void)
 {
-    printf("####################");
+    for(uint8_t noRows = 0; noRows<DISPLAY_MENU_TEMPLATE_NO_ROWS; noRows++)
+        for (uint8_t noColumns = 0; noColumns< DISPLAY_MENU_TEMPLATE_NO_COLUMNS; noColumns++)
+            printf("%c", template[noRows][noColumns]);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -70,8 +73,6 @@ static void display_menu(void)
  ****************************************************************************/
 bool display_init(void)
 {
-    char template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLATE_NO_COLUMNS];
-
     uint8_t noRows = 0u;
     uint8_t noColumns = 0u;
 
@@ -83,8 +84,6 @@ bool display_init(void)
     
     while( (template[noRows][noColumns] = fgetc(fTemplate)) != EOF )
     {
-        printf("%c", template[noRows][noColumns]);
-    
         if(template[noRows][noColumns] == '\n')
         {
             noRows++;
@@ -93,10 +92,10 @@ bool display_init(void)
         else
             noColumns++;  
     }
-    
+
     fclose(fTemplate);
     printf("\n\n");
-
+    display_menu();     /* TODO: TBD where should be called this function */
     return true;
 
 EXIT:
