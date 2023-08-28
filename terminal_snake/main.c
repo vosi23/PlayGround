@@ -23,8 +23,8 @@
 /*--------------------------------------------------------------------------*/
 /*--- local header functions                                             ---*/
 /*--------------------------------------------------------------------------*/
-uint8_t main(void);
-bool main_initGame(void);
+int main(void);     /* W: 'main' is normally a non-static function */
+static bool main_initGame(void);
 
 /*--------------------------------------------------------------------------*/
 /*--- local static variables                                             ---*/
@@ -45,15 +45,17 @@ bool main_initGame(void);
  * \param [in,out]      none
  * \param [out]         none
 
- * \return              uint8_t         Returns the exit code of the program
+ * \return              int         Returns the exit code of the program
  ****************************************************************************/
-uint8_t main(void)
+int main(void)
 {
     bool init_status = false;
 
     init_status = main_initGame();
+    if(init_status == false)
+        return 1;   /* Program didn't executed properly */
 
-    return 0u;
+    return 0;
 }
 
 /*****************************************************************************
@@ -67,7 +69,7 @@ uint8_t main(void)
                              true -> All init functions returned successfully
                              false -> Errors encountered in one or more init functions
  ****************************************************************************/
-bool main_initGame(void)
+static bool main_initGame(void)
 {
     bool result = true;
 
