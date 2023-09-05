@@ -15,8 +15,8 @@
 /*--------------------------------------------------------------------------*/
 /*--- local macros and defines                                           ---*/
 /*--------------------------------------------------------------------------*/
-#define DISPLAY_MENU_TEMPLATE_NO_ROWS           16u
-#define DISPLAY_MENU_TEMPLATE_NO_COLUMNS        45u
+#define DISPLAY_MENU_TEMPLATE_NO_ROWS                                      16u
+#define DISPLAY_MENU_TEMPLATE_NO_COLUMNS                                   45u
 
 /*--------------------------------------------------------------------------*/
 /*--- local data types                                                   ---*/
@@ -30,7 +30,7 @@ static void display_menu(void);
 /*--------------------------------------------------------------------------*/
 /*--- local static variables                                             ---*/
 /*--------------------------------------------------------------------------*/
-static char template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLATE_NO_COLUMNS];
+static char display_template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLATE_NO_COLUMNS];
 
 /*--------------------------------------------------------------------------*/
 /*--- global variables                                                   ---*/
@@ -51,9 +51,9 @@ static char template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLATE_NO_COL
  ****************************************************************************/
 static void display_menu(void)
 {
-    for(uint8_t noRows = 0; noRows<DISPLAY_MENU_TEMPLATE_NO_ROWS; noRows++)
-        for (uint8_t noColumns = 0; noColumns< DISPLAY_MENU_TEMPLATE_NO_COLUMNS; noColumns++)
-            printf("%c", template[noRows][noColumns]);
+    for(uint8_t indexRow = 0; indexRow<DISPLAY_MENU_TEMPLATE_NO_ROWS; indexRow++)
+        for (uint8_t indexColumn = 0; indexColumn< DISPLAY_MENU_TEMPLATE_NO_COLUMNS; indexColumn++)
+            printf("%c", display_template[indexRow][indexColumn]);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -82,15 +82,15 @@ bool display_init(void)
     if(fTemplate == NULL)
         goto EXIT;
     
-    while( (template[noRows][noColumns] = fgetc(fTemplate)) != EOF )
+    while( (display_template[noRows][noColumns] = fgetc(fTemplate)) != EOF )
     {
-        if(template[noRows][noColumns] == '\n')
+        if(display_template[noRows][noColumns] == '\n')
         {
             noRows++;
             noColumns=0u;
         }
         else
-            noColumns++;  
+            noColumns++;
     }
 
     fclose(fTemplate);

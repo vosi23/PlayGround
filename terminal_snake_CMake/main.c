@@ -23,7 +23,7 @@
 /*--------------------------------------------------------------------------*/
 /*--- local header functions                                             ---*/
 /*--------------------------------------------------------------------------*/
-int main(void);     /* W: 'main' is normally a non-static function */
+int main(void);              /* W: 'main' is normally a non-static function */
 static bool main_initGame(void);
 
 /*--------------------------------------------------------------------------*/
