@@ -10,6 +10,7 @@
 /*--------------------------------------------------------------------------*/
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include "display.h"
 
 /*--------------------------------------------------------------------------*/
@@ -80,7 +81,10 @@ bool display_init(void)
     fTemplate = fopen("templates/menu_template", "r");
 
     if(fTemplate == NULL)
-        goto EXIT;
+    {
+        printf("Error! Input file doesn't exist!");
+        exit(0);
+    }
     
     while( (display_template[noRows][noColumns] = fgetc(fTemplate)) != EOF )
     {
@@ -95,10 +99,6 @@ bool display_init(void)
 
     fclose(fTemplate);
     printf("\n\n");
-    display_menu();     /* TODO: TBD where should be called this function */
+    display_menu();     /* TODO: move function call location */
     return true;
-
-EXIT:
-    printf("Error handling display_init function!\n");
-    return false; 
 }
