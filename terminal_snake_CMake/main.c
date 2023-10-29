@@ -53,7 +53,14 @@ int main(void)
 
     init_status = main_initGame();
     if(init_status == false)
+    {
+        /* main_initGame returned false which results to errors during init phase */
         return 1;   /* Program didn't executed properly */
+    }
+
+    display_menu();
+    /* enter in menu mode */
+    /* start */
 
     return 0;
 }

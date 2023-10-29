@@ -16,10 +16,18 @@
 /*--------------------------------------------------------------------------*/
 /*--- global macros and defines                                          ---*/
 /*--------------------------------------------------------------------------*/
+/* TODO: share following defines through another "private" header */
+#define DISPLAY_MENU_TEMPLATE_NO_ROWS                                      16u
+#define DISPLAY_MENU_TEMPLATE_NO_COLUMNS                                   45u
+
+/* TODO: Add the os_env in makefile */
+#define LINUX_ENV
 
 /*--------------------------------------------------------------------------*/
 /*--- global data types                                                  ---*/
 /*--------------------------------------------------------------------------*/
+/* TODO: share following data type through another "private" header  */
+extern char display_template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLATE_NO_COLUMNS];
 
 /*--------------------------------------------------------------------------*/
 /*--- global variables                                                   ---*/
@@ -29,5 +37,7 @@
 /*--- global function headers                                            ---*/
 /*--------------------------------------------------------------------------*/
 extern bool display_init(void);
+extern void display_menu(void);
+extern void display_clear(void);
 
 #endif /* DISPLAY_H */

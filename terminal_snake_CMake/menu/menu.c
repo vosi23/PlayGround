@@ -8,6 +8,9 @@
 /*--------------------------------------------------------------------------*/
 /*--- includes                                                           ---*/
 /*--------------------------------------------------------------------------*/
+#include <stdio.h>
+#include <stdint.h>
+#include "display.h"
 
 /*--------------------------------------------------------------------------*/
 /*--- local macros and defines                                           ---*/
@@ -16,6 +19,19 @@
 /*--------------------------------------------------------------------------*/
 /*--- local data types                                                   ---*/
 /*--------------------------------------------------------------------------*/
+typedef enum display_menu_options_t
+{
+    eStart    = 0u,
+    eOptions  = 1u,
+    eCredits  = 2u,
+    eExit     = 3u,
+}display_menu_options_t;
+
+typedef struct display_menu_arrows_t
+{
+    uint8_t row_pos;
+    uint8_t column_pos;
+}display_menu_arrows_t;
 
 /*--------------------------------------------------------------------------*/
 /*--- local header functions                                             ---*/
@@ -24,6 +40,21 @@
 /*--------------------------------------------------------------------------*/
 /*--- local static variables                                             ---*/
 /*--------------------------------------------------------------------------*/
+display_menu_arrows_t display_menu_arrows[4u] = 
+{
+    {
+        11u, 30u,
+    },
+    {
+        12u, 30u,
+    },
+    {
+        13u, 30u,
+    },
+    {
+        14u, 30u,
+    },
+}
 
 /*--------------------------------------------------------------------------*/
 /*--- global variables                                                   ---*/
@@ -36,3 +67,13 @@
 /*--------------------------------------------------------------------------*/
 /*--- global functions                                                   ---*/
 /*--------------------------------------------------------------------------*/
+/* TODO: add brief */
+void menu_mode(void)
+{
+    display_menu_options_t currentOption = eStart;
+    display_template[display_menu_arrows[(uint8_t)eStart].row_pos, display_menu_arrows[(uint8_t)eStart].column_pos] = '<';
+
+    display_menu();
+    /* TODO: test it by replacing display_menu function caller from main.c with menu_mode */
+
+}

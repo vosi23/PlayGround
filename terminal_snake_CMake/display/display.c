@@ -16,8 +16,6 @@
 /*--------------------------------------------------------------------------*/
 /*--- local macros and defines                                           ---*/
 /*--------------------------------------------------------------------------*/
-#define DISPLAY_MENU_TEMPLATE_NO_ROWS                                      16u
-#define DISPLAY_MENU_TEMPLATE_NO_COLUMNS                                   45u
 
 /*--------------------------------------------------------------------------*/
 /*--- local data types                                                   ---*/
@@ -26,19 +24,22 @@
 /*--------------------------------------------------------------------------*/
 /*--- local header functions                                             ---*/
 /*--------------------------------------------------------------------------*/
-static void display_menu(void);
 
 /*--------------------------------------------------------------------------*/
 /*--- local static variables                                             ---*/
 /*--------------------------------------------------------------------------*/
-static char display_template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLATE_NO_COLUMNS];
 
 /*--------------------------------------------------------------------------*/
 /*--- global variables                                                   ---*/
 /*--------------------------------------------------------------------------*/
+char display_template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLATE_NO_COLUMNS];
 
 /*--------------------------------------------------------------------------*/
 /*--- local functions                                                    ---*/
+/*--------------------------------------------------------------------------*/
+
+/*--------------------------------------------------------------------------*/
+/*--- global functions                                                   ---*/
 /*--------------------------------------------------------------------------*/
 
 /*****************************************************************************
@@ -50,16 +51,13 @@ static char display_template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLAT
 
  * \return              none
  ****************************************************************************/
-static void display_menu(void)
+void display_menu(void)
 {
+    display_clear();
     for(uint8_t indexRow = 0; indexRow<DISPLAY_MENU_TEMPLATE_NO_ROWS; indexRow++)
         for (uint8_t indexColumn = 0; indexColumn< DISPLAY_MENU_TEMPLATE_NO_COLUMNS; indexColumn++)
             printf("%c", display_template[indexRow][indexColumn]);
 }
-
-/*--------------------------------------------------------------------------*/
-/*--- global functions                                                   ---*/
-/*--------------------------------------------------------------------------*/
 
 /*****************************************************************************
  * \brief display_init          Reads the template file and load the menu buffer
@@ -83,7 +81,7 @@ bool display_init(void)
     if(fTemplate == NULL)
     {
         printf("Error! Input file doesn't exist!");
-        exit(0);
+        return false;
     }
     
     while( (display_template[noRows][noColumns] = fgetc(fTemplate)) != EOF )
@@ -99,6 +97,24 @@ bool display_init(void)
 
     fclose(fTemplate);
     printf("\n\n");
-    display_menu();     /* TODO: move function call location */
+
     return true;
+}
+
+/*****************************************************************************
+ * \brief display_clear          Clear the output of terminal
+ *
+ * \param [in]          none
+ * \param [in,out]      none
+ * \param [out]         none
+
+ * \return              none
+ ****************************************************************************/
+void display_clear(void)
+{
+#if defined LINUX_ENV
+    system("clear");
+#elif defined WINDOWS_ENV
+    system("cls");
+#endif /* defined LINUX_ENV */
 }
