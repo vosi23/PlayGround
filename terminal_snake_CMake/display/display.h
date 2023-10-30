@@ -21,7 +21,8 @@
 #define DISPLAY_MENU_TEMPLATE_NO_COLUMNS                                   45u
 
 /* TODO: Add the os_env in makefile */
-#define LINUX_ENV
+//#define LINUX_ENV
+#define WINDOWS_ENV
 
 /*--------------------------------------------------------------------------*/
 /*--- global data types                                                  ---*/

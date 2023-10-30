@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include "main.h"
 #include "display/display.h"
+#include "menu/menu.h"
 
 /*--------------------------------------------------------------------------*/
 /*--- local macros and defines                                           ---*/
@@ -58,7 +59,7 @@ int main(void)
         return 1;   /* Program didn't executed properly */
     }
 
-    display_menu();
+    menu_mode();
     /* enter in menu mode */
     /* start */
 
@@ -80,7 +81,7 @@ static bool main_initGame(void)
 {
     bool result = true;
 
-    result &= display_init();
+    result &= display_init() && menu_init();
 
     return result;
 }
