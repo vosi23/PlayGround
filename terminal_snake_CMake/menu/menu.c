@@ -38,12 +38,13 @@ typedef struct display_menu_arrows_t
 /*--------------------------------------------------------------------------*/
 /*--- local header functions                                             ---*/
 /*--------------------------------------------------------------------------*/
-static void Menu_UpdateDisplayTemplate(display_menu_options_t option);
-static void Menu_RevertTemplateWithDefault(void);
+static void menu_UpdateDisplayTemplate(display_menu_options_t option);
+static void menu_RevertTemplateWithDefault(void);
 
 /*--------------------------------------------------------------------------*/
 /*--- local static variables                                             ---*/
 /*--------------------------------------------------------------------------*/
+/* Variable which contains the row and column position for each option in game from template */
 static const display_menu_arrows_t display_menu_arrows[4u] = 
 {
     {
@@ -71,7 +72,7 @@ static char default_display_template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU
 /*--------------------------------------------------------------------------*/
 
 /*****************************************************************************
- * \brief Menu_UpdateDisplayTemplate        Reverts to the original template * update the current selected "option" with '<' symbol
+ * \brief menu_UpdateDisplayTemplate         Update the current selected "option" with '<' symbol
  *
  * \param [in]          none
  * \param [in,out]      none
@@ -79,15 +80,15 @@ static char default_display_template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU
 
  * \return              none
  ****************************************************************************/
-static void Menu_UpdateDisplayTemplate(display_menu_options_t option)
+static void menu_UpdateDisplayTemplate(display_menu_options_t option)
 {
-    Menu_RevertTemplateWithDefault();
+    menu_RevertTemplateWithDefault();
 
     display_template[display_menu_arrows[option].row_pos][display_menu_arrows[option].column_pos] = '<';
 }
 
 /*****************************************************************************
- * \brief Menu_RevertTemplateWithDefault        Reverts to the original template * update the current selected "option" with '<' symbol
+ * \brief menu_RevertTemplateWithDefault        Reverts to the original template
  *
  * \param [in]          none
  * \param [in,out]      none
@@ -95,7 +96,7 @@ static void Menu_UpdateDisplayTemplate(display_menu_options_t option)
 
  * \return              none
  ****************************************************************************/
-static void Menu_RevertTemplateWithDefault(void)
+static void menu_RevertTemplateWithDefault(void)
 {
     /* Revert to the display template firstly in order to avoid multiple sybmols of '<' */
     for(uint8_t indexRow = 0; indexRow<DISPLAY_MENU_TEMPLATE_NO_ROWS; indexRow++)
@@ -106,7 +107,18 @@ static void Menu_RevertTemplateWithDefault(void)
 /*--------------------------------------------------------------------------*/
 /*--- global functions                                                   ---*/
 /*--------------------------------------------------------------------------*/
-/* TODO: add brief */
+
+/*****************************************************************************
+ * \brief menu_init        Init function of menu
+ *
+ * \param [in]          none
+ * \param [in,out]      none
+ * \param [out]         none
+
+ * \return              bool
+                        True -> Init function done successfully
+                        False -> Init function returned with error
+ ****************************************************************************/
 bool menu_init(void)
 {
     /* Copy default template in another char table */
@@ -117,23 +129,34 @@ bool menu_init(void)
     return true;
 }
 
-/* TODO: add brief */
+/*****************************************************************************
+ * \brief menu_init        Functionality of menu
+ *
+ * \param [in]          none
+ * \param [in,out]      none
+ * \param [out]         none
+
+ * \return              none
+ ****************************************************************************/
 void menu_mode(void)
 {
     char input;
     display_menu_options_t currentOption = eStart;
 
-    Menu_UpdateDisplayTemplate(currentOption);
+    menu_UpdateDisplayTemplate(currentOption);
     display_menu();
 
 #ifdef LINUX_ENV
     struct termios orig_termios;
     struct termios new_termios;
-    tcgetattr(STDIN_FILENO, &orig_termios); // Get current terminal attributes
-    // Make a copy of the original attributes
+    /* Get current terminal attributes */
+    tcgetattr(STDIN_FILENO, &orig_termios);
+    /* Make a copy of the original attributes */
     new_termios = orig_termios;
-    new_termios.c_lflag &= ~(ICANON | ECHO); // Disable canonical mode and echo
-    tcsetattr(STDIN_FILENO, TCSANOW, &new_termios); // Apply the new terminal attributes
+    /* Disable canonical mode and echo */
+    new_termios.c_lflag &= ~(ICANON | ECHO);
+    /* Apply the new terminal attributes */
+    tcsetattr(STDIN_FILENO, TCSANOW, &new_termios);
 #endif /* ifdef LINUX_ENV */
 
     do
@@ -141,10 +164,10 @@ void menu_mode(void)
 #if defined WINDOWS_ENV
         if (_kbhit())
         {
-            // Check if a key has been pressed
-            input = _getch(); // Read a single character
+            /* Check if a key has been pressed */
+            input = _getch();
 #elif defined LINUX_ENV
-            input = getchar(); // Read a single character
+            input = getchar();
 #endif /* defined WINDOWS_ENV */
 
             switch(input)
@@ -153,7 +176,7 @@ void menu_mode(void)
                     if (currentOption == eStart)
                         continue;
                     currentOption--;
-                    Menu_UpdateDisplayTemplate(currentOption);
+                    menu_UpdateDisplayTemplate(currentOption);
                     break;
                 case 'a':
                     break;
@@ -161,7 +184,7 @@ void menu_mode(void)
                     if (currentOption == eExit)
                         continue;
                     currentOption++;
-                    Menu_UpdateDisplayTemplate(currentOption);
+                    menu_UpdateDisplayTemplate(currentOption);
                     break;
                 case 'd':
                     break;
@@ -185,12 +208,6 @@ void menu_mode(void)
                     }
                     break;
                 default:
-                    /* TODO: find the better approach between these two options */
-                    // display_clear();
-                    // printf("\t\tInvalid option!\n\nPress any button to continue!");
-                    // getch();
-                    // display_menu();
-                    // OR
                     continue;
                     break;
             }
@@ -200,9 +217,11 @@ void menu_mode(void)
 #endif /* ifdef WINDOWS_ENV */
 
     }while(1);
+    /* end loop */
 
 #ifdef LINUX_ENV
-    tcsetattr(STDIN_FILENO, TCSANOW, &orig_termios); // Restore original terminal attributes
+    /* Restore original terminal attributes */
+    tcsetattr(STDIN_FILENO, TCSANOW, &orig_termios);
 #endif /* ifdef LINUX_ENV */
 
 }
