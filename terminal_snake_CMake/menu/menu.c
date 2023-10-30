@@ -189,7 +189,7 @@ void menu_mode(void)
                 case 'd':
                     break;
                 case 'q':
-                    /* TODO: create function which exits from the game in order to duplicate code */
+                    /* TODO: create function which exits from the game in order to avoid duplicate code */
                     display_clear();
                     exit(1);
                     break;
@@ -197,7 +197,7 @@ void menu_mode(void)
                     switch(currentOption)
                     {
                         case eExit:
-                            /* TODO: create function which exits from the game in order to duplicate code */
+                            /* TODO: create function which exits from the game in order to avoid duplicate code */
                             display_clear();
                             exit(1);
                         default:
