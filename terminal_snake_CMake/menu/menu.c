@@ -157,8 +157,8 @@ void menu_mode(void)
 
 #ifdef LINUX_ENV
     /* Linux terminal attributes */
-    static struct termios orig_termios;
-    static struct termios new_termios;
+    struct termios orig_termios;
+    struct termios new_termios;
     /* Get current terminal attributes */
     tcgetattr(STDIN_FILENO, &orig_termios);
     /* Make a copy of the original attributes */
