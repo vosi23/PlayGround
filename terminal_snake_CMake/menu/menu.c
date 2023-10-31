@@ -11,7 +11,16 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+
+#ifdef WINDOWS_ENV
 #include <conio.h>
+#endif /* ifdef WINDOWS_ENV */
+
+#ifdef LINUX_ENV
+#include <termios.h>
+#include <unistd.h>
+#endif /* ifdef LINUX_ENV */
+
 #include "../display/display.h"
 
 /*--------------------------------------------------------------------------*/
@@ -21,31 +30,33 @@
 /*--------------------------------------------------------------------------*/
 /*--- local data types                                                   ---*/
 /*--------------------------------------------------------------------------*/
-typedef enum display_menu_options_t
+typedef enum menu_displayOptions_t
 {
     eStart    = 0u,
     eOptions  = 1u,
     eCredits  = 2u,
     eExit     = 3u,
-}display_menu_options_t;
+}menu_displayOptions_t;
 
-typedef struct display_menu_arrows_t
+typedef struct menu_displayArrow_t
 {
     uint8_t row_pos;
     uint8_t column_pos;
-}display_menu_arrows_t;
+}menu_displayArrow_t;
 
 /*--------------------------------------------------------------------------*/
 /*--- local header functions                                             ---*/
 /*--------------------------------------------------------------------------*/
-static void menu_UpdateDisplayTemplate(display_menu_options_t option);
-static void menu_RevertTemplateWithDefault(void);
+static void menu_updateDisplayTemplate(menu_displayOptions_t option);
+static inline void menu_revertTemplateWithDefault(void);
 
 /*--------------------------------------------------------------------------*/
 /*--- local static variables                                             ---*/
 /*--------------------------------------------------------------------------*/
+/* Copy of default display template */
+static char menu_defaultDisplayTemplate[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLATE_NO_COLUMNS];
 /* Variable which contains the row and column position for each option in game from template */
-static const display_menu_arrows_t display_menu_arrows[4u] = 
+static const menu_displayArrow_t menu_displayArrows[4u] = 
 {
     {
         10u, 27u,
@@ -61,8 +72,6 @@ static const display_menu_arrows_t display_menu_arrows[4u] =
     },
 };
 
-static char default_display_template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLATE_NO_COLUMNS];
-
 /*--------------------------------------------------------------------------*/
 /*--- global variables                                                   ---*/
 /*--------------------------------------------------------------------------*/
@@ -72,7 +81,7 @@ static char default_display_template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU
 /*--------------------------------------------------------------------------*/
 
 /*****************************************************************************
- * \brief menu_UpdateDisplayTemplate         Update the current selected "option" with '<' symbol
+ * \brief menu_updateDisplayTemplate         Update the current selected "option" with '<' symbol
  *
  * \param [in]          none
  * \param [in,out]      none
@@ -80,15 +89,15 @@ static char default_display_template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU
 
  * \return              none
  ****************************************************************************/
-static void menu_UpdateDisplayTemplate(display_menu_options_t option)
+static void menu_updateDisplayTemplate(menu_displayOptions_t option)
 {
-    menu_RevertTemplateWithDefault();
+    menu_revertTemplateWithDefault();
 
-    display_template[display_menu_arrows[option].row_pos][display_menu_arrows[option].column_pos] = '<';
+    display_template[menu_displayArrows[option].row_pos][menu_displayArrows[option].column_pos] = '<';
 }
 
 /*****************************************************************************
- * \brief menu_RevertTemplateWithDefault        Reverts to the original template
+ * \brief menu_revertTemplateWithDefault        Helper function which reverts to the original template
  *
  * \param [in]          none
  * \param [in,out]      none
@@ -96,12 +105,12 @@ static void menu_UpdateDisplayTemplate(display_menu_options_t option)
 
  * \return              none
  ****************************************************************************/
-static void menu_RevertTemplateWithDefault(void)
+static inline void menu_revertTemplateWithDefault(void)
 {
     /* Revert to the display template firstly in order to avoid multiple sybmols of '<' */
     for(uint8_t indexRow = 0; indexRow<DISPLAY_MENU_TEMPLATE_NO_ROWS; indexRow++)
         for (uint8_t indexColumn = 0; indexColumn< DISPLAY_MENU_TEMPLATE_NO_COLUMNS; indexColumn++)
-            display_template[indexRow][indexColumn] = default_display_template[indexRow][indexColumn];
+            display_template[indexRow][indexColumn] = menu_defaultDisplayTemplate[indexRow][indexColumn];
 }
 
 /*--------------------------------------------------------------------------*/
@@ -124,7 +133,7 @@ bool menu_init(void)
     /* Copy default template in another char table */
     for(uint8_t indexRow = 0; indexRow<DISPLAY_MENU_TEMPLATE_NO_ROWS; indexRow++)
         for (uint8_t indexColumn = 0; indexColumn< DISPLAY_MENU_TEMPLATE_NO_COLUMNS; indexColumn++)
-            default_display_template[indexRow][indexColumn] = display_template[indexRow][indexColumn];
+            menu_defaultDisplayTemplate[indexRow][indexColumn] = display_template[indexRow][indexColumn];
     
     return true;
 }
@@ -140,15 +149,16 @@ bool menu_init(void)
  ****************************************************************************/
 void menu_mode(void)
 {
-    char input;
-    display_menu_options_t currentOption = eStart;
+    char inputKey;
+    menu_displayOptions_t currentOption = eStart;
 
-    menu_UpdateDisplayTemplate(currentOption);
+    menu_updateDisplayTemplate(currentOption);
     display_menu();
 
 #ifdef LINUX_ENV
-    struct termios orig_termios;
-    struct termios new_termios;
+    /* Linux terminal attributes */
+    static struct termios orig_termios;
+    static struct termios new_termios;
     /* Get current terminal attributes */
     tcgetattr(STDIN_FILENO, &orig_termios);
     /* Make a copy of the original attributes */
@@ -165,18 +175,18 @@ void menu_mode(void)
         if (_kbhit())
         {
             /* Check if a key has been pressed */
-            input = _getch();
+            inputKey = _getch();
 #elif defined LINUX_ENV
-            input = getchar();
+            inputKey = getchar();
 #endif /* defined WINDOWS_ENV */
 
-            switch(input)
+            switch(inputKey)
             {
                 case 'w':
                     if (currentOption == eStart)
                         continue;
                     currentOption--;
-                    menu_UpdateDisplayTemplate(currentOption);
+                    menu_updateDisplayTemplate(currentOption);
                     break;
                 case 'a':
                     break;
@@ -184,41 +194,43 @@ void menu_mode(void)
                     if (currentOption == eExit)
                         continue;
                     currentOption++;
-                    menu_UpdateDisplayTemplate(currentOption);
+                    menu_updateDisplayTemplate(currentOption);
                     break;
                 case 'd':
                     break;
                 case 'q':
-                    /* TODO: create function which exits from the game in order to avoid duplicate code */
-                    display_clear();
-                    exit(1);
+                    goto EXIT;
                     break;
+#if defined WINDOWS_ENV
                 case 13: /* Enter */
+#elif defined LINUX_ENV
+                case 'f':
+#endif /* defined WINDOWS_ENV */
                     switch(currentOption)
                     {
                         case eExit:
-                            /* TODO: create function which exits from the game in order to avoid duplicate code */
-                            display_clear();
-                            exit(1);
+                            goto EXIT;
+                            break;
                         default:
+                            /* TODO: replace the code example */
                             display_clear();
                             printf("\t\tWorks!!\n\n");
-                            getch();
+                            getchar();
                             break;
                     }
                     break;
                 default:
                     continue;
-                    break;
             }
             display_menu();
 #ifdef WINDOWS_ENV
         }
 #endif /* ifdef WINDOWS_ENV */
 
-    }while(1);
-    /* end loop */
+    }while(true);
 
+EXIT:
+    display_clear();
 #ifdef LINUX_ENV
     /* Restore original terminal attributes */
     tcsetattr(STDIN_FILENO, TCSANOW, &orig_termios);
