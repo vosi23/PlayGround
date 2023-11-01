@@ -12,14 +12,13 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#ifdef WINDOWS_ENV
+/* Libraries for Windows/Linux for disabling canonical output mode in terminal */
+#if defined WINDOWS_ENV
 #include <conio.h>
-#endif /* ifdef WINDOWS_ENV */
-
-#ifdef LINUX_ENV
+#elif defined LINUX_ENV
 #include <termios.h>
 #include <unistd.h>
-#endif /* ifdef LINUX_ENV */
+#endif /* defined WINDOWS_ENV */
 
 #include "../display/display.h"
 
@@ -55,6 +54,7 @@ static inline void menu_revertTemplateWithDefault(void);
 /*--------------------------------------------------------------------------*/
 /* Copy of default display template */
 static char menu_defaultDisplayTemplate[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLATE_NO_COLUMNS];
+
 /* Variable which contains the row and column position for each option in game from template */
 static const menu_displayArrow_t menu_displayArrows[4u] = 
 {
@@ -201,11 +201,7 @@ void menu_mode(void)
                 case 'q':
                     goto EXIT;
                     break;
-#if defined WINDOWS_ENV
-                case 13: /* Enter */
-#elif defined LINUX_ENV
-                case 'f':
-#endif /* defined WINDOWS_ENV */
+                case '\n':
                     switch(currentOption)
                     {
                         case eExit:
