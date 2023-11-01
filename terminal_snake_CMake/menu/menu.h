@@ -1,12 +1,12 @@
 /*****************************************************************************
- * \brief display.h         Header file for handling the temrinal output
+ * \brief menu.h         Header file for handling the menu content
  * Type file: header file
  * 
  * \author Vasile Baltei
  ****************************************************************************/
 
-#ifndef DISPLAY_H
-#define DISPLAY_H
+#ifndef MENU_H
+#define MENU_H
 
 /****************************************************************************/
 /*                    Includes                                              */
@@ -16,15 +16,10 @@
 /****************************************************************************/
 /*                    Global macros and defines                             */
 /****************************************************************************/
-/* TODO: share following defines through another "private" header */
-#define DISPLAY_MENU_TEMPLATE_NO_ROWS                                      16u
-#define DISPLAY_MENU_TEMPLATE_NO_COLUMNS                                   45u
 
 /****************************************************************************/
 /*                    Global data types                                     */
 /****************************************************************************/
-/* TODO: share following data type through another "private" header  */
-extern char display_template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLATE_NO_COLUMNS];
 
 /****************************************************************************/
 /*                    Global variables                                      */
@@ -33,8 +28,7 @@ extern char display_template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLAT
 /****************************************************************************/
 /*                    Global function headers                               */
 /****************************************************************************/
-extern bool display_init(void);
-extern void display_menu(void);
-extern void display_clear(void);
+extern void menu_mode(void);
+extern bool menu_init(void);
 
-#endif /* DISPLAY_H */
+#endif /* MENU_H */

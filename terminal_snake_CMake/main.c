@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include "main.h"
 #include "display/display.h"
+#include "menu/menu.h"
 
 /****************************************************************************/
 /*                    Local macros and defines                              */
@@ -21,7 +22,7 @@
 /****************************************************************************/
 
 /****************************************************************************/
-/*                    local header functions                                */
+/*                    Local header functions                                */
 /****************************************************************************/
 int main(void);              /* W: 'main' is normally a non-static function */
 static bool main_initGame(void);
@@ -53,7 +54,10 @@ int main(void)
 
     init_status = main_initGame();
     if(init_status == false)
+        /* main_initGame returned false which results to errors during init phase */
         return 1;   /* Program didn't executed properly */
+
+    menu_mode();
 
     return 0;
 }
@@ -71,9 +75,9 @@ int main(void)
  ****************************************************************************/
 static bool main_initGame(void)
 {
-    bool result = true;
+    bool result = false;
 
-    result &= display_init();
+    result = display_init() && menu_init();
 
     return result;
 }

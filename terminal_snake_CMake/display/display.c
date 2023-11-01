@@ -10,34 +10,36 @@
 /****************************************************************************/
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include "display.h"
 
 /****************************************************************************/
 /*                    Local macros and defines                              */
 /****************************************************************************/
-#define DISPLAY_MENU_TEMPLATE_NO_ROWS                                      16u
-#define DISPLAY_MENU_TEMPLATE_NO_COLUMNS                                   45u
 
 /****************************************************************************/
 /*                    Local data types                                      */
 /****************************************************************************/
 
 /****************************************************************************/
-/*                    local header functions                                */
+/*                    Local header functions                                */
 /****************************************************************************/
-static void display_menu(void);
 
 /****************************************************************************/
 /*                    Local static variables                                */
 /****************************************************************************/
-static char display_template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLATE_NO_COLUMNS];
 
 /****************************************************************************/
 /*                    Global variables                                      */
 /****************************************************************************/
+char display_template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLATE_NO_COLUMNS];
 
 /****************************************************************************/
 /*                    Local functions                                       */
+/****************************************************************************/
+
+/****************************************************************************/
+/*                    Global functions                                      */
 /****************************************************************************/
 
 /*****************************************************************************
@@ -49,16 +51,13 @@ static char display_template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLAT
 
  * \return              none
  ****************************************************************************/
-static void display_menu(void)
+void display_menu(void)
 {
+    display_clear();
     for(uint8_t indexRow = 0; indexRow<DISPLAY_MENU_TEMPLATE_NO_ROWS; indexRow++)
         for (uint8_t indexColumn = 0; indexColumn< DISPLAY_MENU_TEMPLATE_NO_COLUMNS; indexColumn++)
             printf("%c", display_template[indexRow][indexColumn]);
 }
-
-/****************************************************************************/
-/*                    Global functions                                      */
-/****************************************************************************/
 
 /*****************************************************************************
  * \brief display_init          Reads the template file and load the menu buffer
@@ -80,7 +79,10 @@ bool display_init(void)
     fTemplate = fopen("templates/menu_template", "r");
 
     if(fTemplate == NULL)
-        goto EXIT;
+    {
+        printf("Error! Input file doesn't exist!");
+        return false;
+    }
     
     while( (display_template[noRows][noColumns] = fgetc(fTemplate)) != EOF )
     {
@@ -95,10 +97,24 @@ bool display_init(void)
 
     fclose(fTemplate);
     printf("\n\n");
-    display_menu();     /* TODO: TBD where should be called this function */
-    return true;
 
-EXIT:
-    printf("Error handling display_init function!\n");
-    return false; 
+    return true;
+}
+
+/*****************************************************************************
+ * \brief display_clear          Clear the output of terminal
+ *
+ * \param [in]          none
+ * \param [in,out]      none
+ * \param [out]         none
+
+ * \return              none
+ ****************************************************************************/
+void display_clear(void)
+{
+#if defined LINUX_ENV
+    system("clear");
+#elif defined WINDOWS_ENV
+    system("cls");
+#endif /* defined LINUX_ENV */
 }
