@@ -202,6 +202,7 @@ void menu_mode(void)
                     goto EXIT;
                     break;
                 case '\n':
+                case 13:
                     switch(currentOption)
                     {
                         case eExit:
