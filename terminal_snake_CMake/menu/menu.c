@@ -25,6 +25,9 @@
 /****************************************************************************/
 /*                    Local macros and defines                              */
 /****************************************************************************/
+#ifdef WINDOWS_ENV
+#define MENU_ENTER_KEY_ASCII                                              13u
+#endif
 
 /****************************************************************************/
 /*                    Local data types                                      */
@@ -188,26 +191,24 @@ void menu_mode(void)
                     currentOption--;
                     menu_updateDisplayTemplate(currentOption);
                     break;
-                case 'a':
-                    break;
                 case 's':
                     if (currentOption == eExit)
                         continue;
                     currentOption++;
                     menu_updateDisplayTemplate(currentOption);
                     break;
-                case 'd':
-                    break;
                 case 'q':
                     goto EXIT;
-                    break;
+
+#if defined WINDOWS_ENV
+                case MENU_ENTER_KEY_ASCII:
+#elif defined LINUX_ENV
                 case '\n':
-                case 13:
+#endif /* defined WINDOWS_ENV */
                     switch(currentOption)
                     {
                         case eExit:
                             goto EXIT;
-                            break;
                         default:
                             /* TODO: replace the code example */
                             display_clear();
