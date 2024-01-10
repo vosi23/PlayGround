@@ -17,14 +17,20 @@
 /*                    Global macros and defines                             */
 /****************************************************************************/
 /* TODO: share following defines through another "private" header */
+/* NO Rows and columns for menu template */
 #define DISPLAY_MENU_TEMPLATE_NO_ROWS                                      16u
 #define DISPLAY_MENU_TEMPLATE_NO_COLUMNS                                   45u
+
+/* NO Rows and columns for credits template */
+#define DISPLAY_CREDITS_TEMPLATE_NO_ROWS                                    8u
+#define DISPLAY_CREDITS_TEMPLATE_NO_COLUMNS                                45u
 
 /****************************************************************************/
 /*                    Global data types                                     */
 /****************************************************************************/
 /* TODO: share following data type through another "private" header  */
-extern char display_template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLATE_NO_COLUMNS];
+extern char display_menuTemplate[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLATE_NO_COLUMNS];
+extern char display_creditsTemplate[DISPLAY_CREDITS_TEMPLATE_NO_ROWS][DISPLAY_CREDITS_TEMPLATE_NO_COLUMNS];
 
 /****************************************************************************/
 /*                    Global variables                                      */

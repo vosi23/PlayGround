@@ -32,7 +32,8 @@
 /****************************************************************************/
 /*                    Global variables                                      */
 /****************************************************************************/
-char display_template[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLATE_NO_COLUMNS];
+char display_menuTemplate[DISPLAY_MENU_TEMPLATE_NO_ROWS][DISPLAY_MENU_TEMPLATE_NO_COLUMNS];
+char display_creditsTemplate[DISPLAY_CREDITS_TEMPLATE_NO_ROWS][DISPLAY_CREDITS_TEMPLATE_NO_COLUMNS];
 
 /****************************************************************************/
 /*                    Local functions                                       */
@@ -56,7 +57,24 @@ void display_menu(void)
     display_clear();
     for(uint8_t indexRow = 0; indexRow<DISPLAY_MENU_TEMPLATE_NO_ROWS; indexRow++)
         for (uint8_t indexColumn = 0; indexColumn< DISPLAY_MENU_TEMPLATE_NO_COLUMNS; indexColumn++)
-            printf("%c", display_template[indexRow][indexColumn]);
+            printf("%c", display_menuTemplate[indexRow][indexColumn]);
+}
+
+/*****************************************************************************
+ * \brief display_credits          Function which display the credits
+ *
+ * \param [in]          none
+ * \param [in,out]      none
+ * \param [out]         none
+
+ * \return              none
+ ****************************************************************************/
+void display_credits(void)
+{
+    display_clear();
+    for(uint8_t indexRow = 0; indexRow<DISPLAY_CREDITS_TEMPLATE_NO_ROWS; indexRow++)
+        for (uint8_t indexColumn = 0; indexColumn< DISPLAY_CREDITS_TEMPLATE_NO_COLUMNS; indexColumn++)
+            printf("%c", display_menuTemplate[indexRow][indexColumn]);
 }
 
 /*****************************************************************************
@@ -80,13 +98,13 @@ bool display_init(void)
 
     if(fTemplate == NULL)
     {
-        printf("Error! Input file doesn't exist!");
+        printf("Error! Input files can't be found!");
         return false;
     }
     
-    while( (display_template[noRows][noColumns] = fgetc(fTemplate)) != EOF )
+    while( (display_menuTemplate[noRows][noColumns] = fgetc(fTemplate)) != EOF )
     {
-        if(display_template[noRows][noColumns] == '\n')
+        if(display_menuTemplate[noRows][noColumns] == '\n')
         {
             noRows++;
             noColumns=0u;
@@ -96,7 +114,31 @@ bool display_init(void)
     }
 
     fclose(fTemplate);
-    printf("\n\n");
+
+    noRows = noColumns = 0u;
+
+    FILE *fCreditsTemplate;
+    fCreditsTemplate = fopen("templates/credits_template", "r");
+
+    /* TODO: Create a function for duplicate code */
+    if(fCreditsTemplate == NULL)
+    {
+        printf("Error! Input files can't be found!");
+        return false;
+    }
+    
+    while( (display_creditsTemplate[noRows][noColumns] = fgetc(fCreditsTemplate)) != EOF )
+    {
+        if(display_creditsTemplate[noRows][noColumns] == '\n')
+        {
+            noRows++;
+            noColumns=0u;
+        }
+        else
+            noColumns++;
+    }
+
+    fclose(fCreditsTemplate);
 
     return true;
 }

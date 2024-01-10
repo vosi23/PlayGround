@@ -96,7 +96,7 @@ static void menu_updateDisplayTemplate(menu_displayOptions_t option)
 {
     menu_revertTemplateWithDefault();
 
-    display_template[menu_displayArrows[option].row_pos][menu_displayArrows[option].column_pos] = '<';
+    display_menuTemplate[menu_displayArrows[option].row_pos][menu_displayArrows[option].column_pos] = '<';
 }
 
 /*****************************************************************************
@@ -113,7 +113,40 @@ static inline void menu_revertTemplateWithDefault(void)
     /* Revert to the display template firstly in order to avoid multiple sybmols of '<' */
     for(uint8_t indexRow = 0; indexRow<DISPLAY_MENU_TEMPLATE_NO_ROWS; indexRow++)
         for (uint8_t indexColumn = 0; indexColumn< DISPLAY_MENU_TEMPLATE_NO_COLUMNS; indexColumn++)
-            display_template[indexRow][indexColumn] = menu_defaultDisplayTemplate[indexRow][indexColumn];
+            display_menuTemplate[indexRow][indexColumn] = menu_defaultDisplayTemplate[indexRow][indexColumn];
+}
+
+/*****************************************************************************
+ * \brief menu_creditsHandle        Handler function for showing the credits
+ *
+ * \param [in]          none
+ * \param [in,out]      none
+ * \param [out]         none
+
+ * \return              none
+ ****************************************************************************/
+static void menu_creditsHandle(void)
+{
+    char inputKey;
+
+    display_credits();
+
+    while(true)
+    {
+#if defined WINDOWS_ENV
+        /* Check if a key has been pressed */
+        inputKey = _getch();
+#elif defined LINUX_ENV
+        inputKey = getchar();
+#endif /* defined WINDOWS_ENV */
+
+#if defined WINDOWS_ENV
+        if(inputKey == 'q' || inputKey == MENU_ENTER_KEY_ASCII)
+#elif defined LINUX_ENV
+        if(inputKey == 'q' || inputKey == '\n')
+#endif /* defined WINDOWS_ENV */
+            break;
+    }
 }
 
 /****************************************************************************/
@@ -136,7 +169,7 @@ bool menu_init(void)
     /* Copy default template in another char table */
     for(uint8_t indexRow = 0; indexRow<DISPLAY_MENU_TEMPLATE_NO_ROWS; indexRow++)
         for (uint8_t indexColumn = 0; indexColumn< DISPLAY_MENU_TEMPLATE_NO_COLUMNS; indexColumn++)
-            menu_defaultDisplayTemplate[indexRow][indexColumn] = display_template[indexRow][indexColumn];
+            menu_defaultDisplayTemplate[indexRow][indexColumn] = display_menuTemplate[indexRow][indexColumn];
     
     return true;
 }
@@ -156,6 +189,8 @@ void menu_mode(void)
     menu_displayOptions_t currentOption = eStart;
 
     menu_updateDisplayTemplate(currentOption);
+
+    /* Start showing the menu */
     display_menu();
 
 #ifdef LINUX_ENV
@@ -172,7 +207,7 @@ void menu_mode(void)
     tcsetattr(STDIN_FILENO, TCSANOW, &new_termios);
 #endif /* ifdef LINUX_ENV */
 
-    do
+    while(true)
     {
 #if defined WINDOWS_ENV
         if (_kbhit())
@@ -207,6 +242,9 @@ void menu_mode(void)
 #endif /* defined WINDOWS_ENV */
                     switch(currentOption)
                     {
+                        case eCredits:
+                            menu_creditsHandle();
+                            break;
                         case eExit:
                             goto EXIT;
                         default:
@@ -224,8 +262,7 @@ void menu_mode(void)
 #ifdef WINDOWS_ENV
         }
 #endif /* ifdef WINDOWS_ENV */
-
-    }while(true);
+    }
 
 EXIT:
     display_clear();
