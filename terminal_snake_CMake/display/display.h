@@ -42,5 +42,6 @@ extern char display_creditsTemplate[DISPLAY_CREDITS_TEMPLATE_NO_ROWS][DISPLAY_CR
 extern bool display_init(void);
 extern void display_menu(void);
 extern void display_clear(void);
+extern void display_credits(void);
 
 #endif /* DISPLAY_H */

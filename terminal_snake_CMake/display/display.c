@@ -74,7 +74,7 @@ void display_credits(void)
     display_clear();
     for(uint8_t indexRow = 0; indexRow<DISPLAY_CREDITS_TEMPLATE_NO_ROWS; indexRow++)
         for (uint8_t indexColumn = 0; indexColumn< DISPLAY_CREDITS_TEMPLATE_NO_COLUMNS; indexColumn++)
-            printf("%c", display_menuTemplate[indexRow][indexColumn]);
+            printf("%c", display_creditsTemplate[indexRow][indexColumn]);
 }
 
 /*****************************************************************************
